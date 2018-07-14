@@ -37,10 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.samples.petclinic.model.Owner;
-import org.springframework.samples.petclinic.model.Pet;
-import org.springframework.samples.petclinic.model.PetType;
-import org.springframework.samples.petclinic.model.Visit;
+import org.springframework.samples.petclinic.model.*;
 import org.springframework.samples.petclinic.service.ApplicationTestConfig;
 import org.springframework.samples.petclinic.service.ClinicService;
 import org.springframework.test.context.ContextConfiguration;
@@ -99,9 +96,15 @@ public class VisitRestControllerTests {
     	pet.setOwner(owner);
     	pet.setType(petType);
 
+        Vet vet = new Vet();
+        vet.setId(6);
+        vet.setFirstName("Mary");
+        vet.setLastName("Smith");
+
 
     	Visit visit = new Visit();
     	visit.setId(2);
+    	visit.setVet(vet);
     	visit.setPet(pet);
     	visit.setDate(new Date());
     	visit.setDescription("rabies shot");
@@ -110,6 +113,7 @@ public class VisitRestControllerTests {
     	visit = new Visit();
     	visit.setId(3);
     	visit.setPet(pet);
+    	visit.setVet(vet);
     	visit.setDate(new Date());
     	visit.setDescription("neutered");
     	visits.add(visit);

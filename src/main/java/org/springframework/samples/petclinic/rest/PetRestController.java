@@ -16,7 +16,9 @@
 
 package org.springframework.samples.petclinic.rest;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -26,8 +28,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.model.Pet;
-import org.springframework.samples.petclinic.model.PetType;
+import org.springframework.samples.petclinic.model.*;
 import org.springframework.samples.petclinic.service.ClinicService;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -40,6 +41,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * @author Vitaliy Fedoriv
+ *
+ * Updated by Robin Cai 7/14/2018
+ * add endpoint /owner/{ownerId} to return a list of pets given an ownerId
+ * add endpoint /vet/{vetId} to return all pets that has visited a vet
  *
  */
 
@@ -69,7 +74,32 @@ public class PetRestController {
 		return new ResponseEntity<Collection<Pet>>(pets, HttpStatus.OK);
 	}
 
-	@RequestMapping(value = "/pettypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    @RequestMapping(value = "/owner/{ownerId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<Collection<Pet>> getPetsByOwner(@PathVariable("ownerId") int ownerId){
+        Owner owner = this.clinicService.findOwnerById(ownerId);
+        List<Pet> pets = owner.getPets();
+        if(pets.isEmpty()){
+            return new ResponseEntity<Collection<Pet>>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<Collection<Pet>>(pets, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/vet/{vetId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResponseEntity<Collection<Pet>> getPetsVistedVet(@PathVariable("vetId") int vetId){
+        Vet vet = this.clinicService.findVetById(vetId);
+        List<Visit> visits = vet.getVisits();
+        if(visits.isEmpty()){
+            return new ResponseEntity<Collection<Pet>>(HttpStatus.NOT_FOUND);
+        }
+        List<Pet> pets = new ArrayList<>();
+        for(Visit visit: visits){
+            pets.add(visit.getPet());
+        }
+        return new ResponseEntity<Collection<Pet>>(pets, HttpStatus.OK);
+    }
+
+
+    @RequestMapping(value = "/pettypes", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<Collection<PetType>> getPetTypes(){
 		return new ResponseEntity<Collection<PetType>>(this.clinicService.findPetTypes(), HttpStatus.OK);
 	}
@@ -119,6 +149,5 @@ public class PetRestController {
 		this.clinicService.deletePet(pet);
 		return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
 	}
-
 
 }

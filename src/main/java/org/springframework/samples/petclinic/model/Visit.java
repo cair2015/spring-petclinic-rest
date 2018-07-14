@@ -38,6 +38,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * Simple JavaBean domain object representing a visit.
  *
  * @author Ken Krebs
+ *
+ *  * Updated by Robin Cai 7/14/2018  add vet
  */
 @Entity
 @Table(name = "visits")
@@ -67,6 +69,13 @@ public class Visit extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "pet_id")
     private Pet pet;
+
+    /**
+     * Holds value of property vet.
+     */
+    @ManyToOne
+    @JoinColumn(name = "vet_id")
+    private Vet vet;
 
 
     /**
@@ -129,6 +138,25 @@ public class Visit extends BaseEntity {
      */
     public void setPet(Pet pet) {
         this.pet = pet;
+    }
+
+
+    /**
+     * Getter for property vet.
+     *
+     * @return Value of property vet.
+     */
+    public Vet getVet() {
+        return this.vet;
+    }
+
+    /**
+     * Setter for property vet.
+     *
+     * @param vet New value of property vet.
+     */
+    public void setVet(Vet vet) {
+        this.vet = vet;
     }
 
 }
