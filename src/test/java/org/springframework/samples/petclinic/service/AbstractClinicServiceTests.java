@@ -186,12 +186,12 @@ public abstract class AbstractClinicServiceTests {
     @Transactional
     public void shouldAddNewVisitForPet() {
         Pet pet7 = this.clinicService.findPetById(7);
-        Vet vet1 = this.clinicService.findVetById(1);
         int found = pet7.getVisits().size();
+        Vet vet = this.clinicService.findVetById(2);
         Visit visit = new Visit();
-        visit.setVet(vet1);
         pet7.addVisit(visit);
         visit.setDescription("test");
+        visit.setVet(vet);
         this.clinicService.saveVisit(visit);
         this.clinicService.savePet(pet7);
 
@@ -258,10 +258,9 @@ public abstract class AbstractClinicServiceTests {
 
         Visit visit = new Visit();
         visit.setPet(pet);
-        visit.setVet(this.clinicService.findVetById(3));
         visit.setDate(new Date());
         visit.setDescription("new visit");
-
+        visit.setVet(this.clinicService.findVetById(1));
 
         this.clinicService.saveVisit(visit);
         assertThat(visit.getId().longValue()).isNotEqualTo(0);
