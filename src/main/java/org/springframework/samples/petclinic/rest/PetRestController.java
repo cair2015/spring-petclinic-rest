@@ -16,14 +16,14 @@
 
 package org.springframework.samples.petclinic.rest;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.MutableSortDefinition;
+import org.springframework.beans.support.PropertyComparator;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -89,11 +89,13 @@ public class PetRestController {
         if(vet ==null || vet.getVisits().isEmpty()){
             return new ResponseEntity<Collection<Pet>>(HttpStatus.NOT_FOUND);
         }
-        List<Pet> pets = new ArrayList<>();
+        Set<Pet> pets = new HashSet<>();
         for(Visit visit: vet.getVisits()){
             pets.add(visit.getPet());
         }
-        return new ResponseEntity<Collection<Pet>>(pets, HttpStatus.OK);
+        List<Pet> sortedPets = new ArrayList<>(pets);
+        PropertyComparator.sort(sortedPets, new MutableSortDefinition("name", true, true));
+        return new ResponseEntity<Collection<Pet>>(sortedPets, HttpStatus.OK);
     }
 
 
